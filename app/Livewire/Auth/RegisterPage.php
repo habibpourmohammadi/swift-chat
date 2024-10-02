@@ -3,9 +3,10 @@
 namespace App\Livewire\Auth;
 
 use App\Models\User;
+use Livewire\Component;
+use Illuminate\Support\Str;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Validate;
-use Livewire\Component;
 
 #[Title("ثبت نام")]
 class RegisterPage extends Component
@@ -38,11 +39,17 @@ class RegisterPage extends Component
             "first_name" => $this->first_name,
             "last_name" => $this->last_name,
             "mobile" => $this->mobile,
-            "username" => $this->username,
+            "username" => Str::lower($this->username),
             "password" => $this->password,
         ]);
 
-        // Redirect to login page with a success message
-        // $this->redirectRoute("login", navigate: true);
+        // Flash success message to the session
+        session()->flash('toast-success', [
+            "title" => 'سوئیفت چت',
+            "message" => 'حساب کاربری شما با موفقیت ایجاد شد.',
+        ]);
+
+        // Redirect to login page
+        $this->redirectRoute("auth.login.page", navigate: true);
     }
 }

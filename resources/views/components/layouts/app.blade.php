@@ -13,6 +13,8 @@
 
 <body dir="rtl">
     {{ $slot }}
+
+    @include('alerts.toast.success')
 </body>
 
 </html>
