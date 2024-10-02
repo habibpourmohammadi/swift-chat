@@ -4,13 +4,14 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="{{ Vite::asset('resources/images/logo/swift-chat-favicon.png') }}">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <title>
-        {{ isset($title) ? ".:: Swift Chat - $title ::." : '.:: Swift Chat ::.' }}
+        {{ isset($title) ? " سوئیفت چت | $title " : ' سوئیفت چت ' }}
     </title>
 </head>
 
-<body>
+<body dir="rtl">
     {{ $slot }}
 </body>
 
