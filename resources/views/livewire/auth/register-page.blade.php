@@ -25,5 +25,14 @@
             placeholder="رمز عبور خود را وارد کنید ..." />
 
         <x-auth.form.button label="ثبت نام" />
+
+        <div class="mt-2 text-center">
+            <p class="text-xs">
+                حساب کاربری دارید؟
+                <a href="{{ route('auth.login.page') }}" wire:navigate class="text-blue-600 hover:underline">
+                    ورود حساب کاربری
+                </a>
+            </p>
+        </div>
     </form>
 </div>

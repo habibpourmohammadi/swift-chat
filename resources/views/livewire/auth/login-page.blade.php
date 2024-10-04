@@ -16,6 +16,16 @@
         <x-auth.form.input wire:model="password" type="password" label="رمز عبور" id="password"
             placeholder="رمز عبور خود را وارد کنید ..." />
 
+
         <x-auth.form.button label="ورود" />
+
+        <div class="mt-2 text-center">
+            <p class="text-xs">
+                حساب کاربری ندارید؟
+                <a href="{{ route('auth.register.page') }}" wire:navigate class="text-blue-600 hover:underline">
+                    ایجاد حساب کاربری
+                </a>
+            </p>
+        </div>
     </form>
 </div>

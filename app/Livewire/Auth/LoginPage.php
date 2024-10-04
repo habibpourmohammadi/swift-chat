@@ -64,7 +64,7 @@ class LoginPage extends Component
             ]);
 
             // Redirect the user to the home page
-            // $this->redirectRoute("home.page", navigate: true);
+            $this->redirectRoute("home.page", navigate: true);
         } else {
             // Add an error message if login fails
             $this->addError('password', "نام کاربری یا کلمه عبور اشتباه می باشد.");
