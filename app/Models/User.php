@@ -7,7 +7,9 @@ use App\Models\ChatMember;
 use App\Models\ChatMessage;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Vite;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -89,9 +91,11 @@ class User extends Authenticatable
         return $this->hasMany(ChatMessage::class);
     }
 
-    public function getAvatarAttribute()
+    public function avatar(): Attribute
     {
-        return $this->avatar ?? Vite::asset("resources/images/avatar/default-avatar.jpg");
+        return new Attribute(
+            get: fn($value) => isset($value) ? Storage::url($value) : Vite::asset("resources/images/avatar/default-avatar.jpg")
+        );
     }
 
     public function getFullNameAttribute()

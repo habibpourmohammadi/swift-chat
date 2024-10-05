@@ -1,4 +1,4 @@
-<div
+<div wire:click="redirectToChatPage"
     class="flex flex-row w-full justify-between hover:bg-gray-100 hover:cursor-pointer hover:transition-all rounded-lg p-1.5 my-2.5">
     <div class="flex gap-2">
         <div>
