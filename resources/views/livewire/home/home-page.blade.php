@@ -4,39 +4,13 @@
 
         @include('partials.home.drawer')
         <div class="flex-1 overflow-y-auto scroll-smooth" style="scrollbar-width: none; -ms-overflow-style: none;">
-            @for ($i = 0; $i <= 9; $i++)
-                <div
-                    class="flex flex-row w-full justify-between hover:bg-gray-100 hover:cursor-pointer hover:transition-all rounded-lg p-1.5 my-2.5">
-                    <div class="flex gap-2">
-                        <div>
-                            <img src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png"
-                                class="w-12 rounded-lg" alt="">
-                        </div>
-                        <div class="flex flex-col gap-2">
-                            <span class="text-sm text-gray-800">
-                                حبیب الله پورمحمدی
-                            </span>
-                            <span class="text-xs text-gray-400">
-                                <span class="text-blue-500">
-                                    شما :
-                                </span>
-                                <span>
-                                    سلام حبیب حالت چطور ...
-                                </span>
-                            </span>
-                        </div>
-                    </div>
-                    <div>
-                        <span class="text-sm text-gray-500">
-                            <small>
-                                <small>
-                                    5 دقیقه
-                                </small>
-                            </small>
-                        </span>
-                    </div>
+            @forelse ($this->chats as $chat)
+                <livewire:home.member :key="$chat->chat->chat_uuid" :member="$chat" />
+            @empty
+                <div class="text-red-500 text-sm text-center h-full flex justify-center items-center font-bold">
+                    لیست گفتگو ها خالی است !
                 </div>
-            @endfor
+            @endforelse
         </div>
     </div>
 
