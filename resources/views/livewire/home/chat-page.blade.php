@@ -5,7 +5,7 @@
         @include('partials.home.drawer')
         <div class="flex-1 overflow-y-auto scroll-smooth" style="scrollbar-width: none; -ms-overflow-style: none;">
             @forelse ($this->chats as $chat)
-                <livewire:home.member :key="$chat->chat->chat_uuid" :member="$chat" />
+                <livewire:home.member :key="$chat->chat->chat_uuid" :member="$chat"/>
             @empty
                 <div class="text-red-500 text-sm text-center h-full flex justify-center items-center font-bold">
                     لیست گفتگو ها خالی است !
@@ -20,27 +20,32 @@
             <div class="flex flex-row w-full justify-start items-center gap-3 pr-3 pb-3.5">
                 <div>
                     <img src="{{ $this->member->user->avatar }}" class="w-10 rounded-md shadow-sm"
-                        alt="{{ $this->member->user->full_name }}">
+                         alt="{{ $this->member->user->full_name }}">
                 </div>
-                <div class="flex flex-col gap-2">
+                <div class="flex flex-col gap-1">
                     <span class="text-sm text-gray-700">
                         {{ $this->member->user->full_name }}
+                    </span>
+                    <span id="chat-member-is-typing" class="text-sm text-green-400 hidden">
+                        <small>
+                            در حال نوشتن ...
+                        </small>
                     </span>
                 </div>
             </div>
             <a href="{{ route('home.page') }}" wire:navigate
-                class="pt-2 pl-3 text-gray-600 hover:text-red-700 hover:transition-all cursor-pointer">
+               class="pt-2 pl-3 text-gray-600 hover:text-red-700 hover:transition-all cursor-pointer">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                    stroke="currentColor" class="size-6">
+                     stroke="currentColor" class="size-6">
                     <path stroke-linecap="round" stroke-linejoin="round"
-                        d="M12 9.75 14.25 12m0 0 2.25 2.25M14.25 12l2.25-2.25M14.25 12 12 14.25m-2.58 4.92-6.374-6.375a1.125 1.125 0 0 1 0-1.59L9.42 4.83c.21-.211.497-.33.795-.33H19.5a2.25 2.25 0 0 1 2.25 2.25v10.5a2.25 2.25 0 0 1-2.25 2.25h-9.284c-.298 0-.585-.119-.795-.33Z" />
+                          d="M12 9.75 14.25 12m0 0 2.25 2.25M14.25 12l2.25-2.25M14.25 12 12 14.25m-2.58 4.92-6.374-6.375a1.125 1.125 0 0 1 0-1.59L9.42 4.83c.21-.211.497-.33.795-.33H19.5a2.25 2.25 0 0 1 2.25 2.25v10.5a2.25 2.25 0 0 1-2.25 2.25h-9.284c-.298 0-.585-.119-.795-.33Z"/>
                 </svg>
             </a>
         </div>
         <div class="pt-6 px-3 flex flex-col gap-8 overflow-y-auto scroll-smooth pb-5 h-screen"
-            style="scrollbar-width: none; -ms-overflow-style: none;" id="chat-list-wrapper">
+             style="scrollbar-width: none; -ms-overflow-style: none;" id="chat-list-wrapper">
             @forelse ($this->messages as $message)
-                <x-home.chat.message wire:key="{{ $message->id }}" :message="$message" />
+                <x-home.chat.message wire:key="{{ $message->id }}" :message="$message"/>
             @empty
                 <div class="flex justify-center items-center h-screen text-red-500 font-bold text-sm">
                     پیامی ثبت نشده !
@@ -50,66 +55,71 @@
 
         <form id="message-form" class="w-full flex items-center gap-3 px-3 pb-2 border-t pt-2 bottom-0">
             <input type="text" id="message"
-                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                autofocus placeholder="پیام خود را بنویسید ..." />
+                   class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                   autofocus placeholder="پیام خود را بنویسید ..."/>
             <button type="submit" id="send-button"
-                class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
+                    class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
                 ارسال
             </button>
         </form>
     </div>
 </div>
 @script
-    <script>
-        // Retrieve the chat UUID from the Livewire component
-        const chatUuid = $wire.uuid;
-        // Select the chat list and message input elements from the DOM
-        const chatListWrapper = document.getElementById("chat-list-wrapper");
-        const messageInput = document.getElementById("message");
-        const messageForm = document.getElementById("message-form");
+<script>
+    const chatUuid = $wire.uuid;
+    const chatListWrapper = document.getElementById("chat-list-wrapper");
+    const messageInput = document.getElementById("message");
+    const messageForm = document.getElementById("message-form");
 
-        // Join the Echo channel for real-time messaging using the chat UUID
-        Echo.join(`chat.${chatUuid}`)
-            .listenForWhisper("newChat", createNewMessage);
+    Echo.join(`chat.${chatUuid}`)
+        .listenForWhisper("newChat", createNewMessage)
+        .listenForWhisper("currentMemberTyping", currentMemberTyping);
 
-        // Handle form submission for sending a new message
-        messageForm.addEventListener("submit", (e) => {
-            e.preventDefault();
+    messageForm.addEventListener("submit", (e) => {
+        e.preventDefault();
 
-            let message = messageInput.value;
+        let message = messageInput.value;
 
-            if (message.length > 0) {
-                // Send the message via Livewire and handle the response
-                $wire.createMessage(message).then(result => {
-                    messageInput.value = "";
+        if (message.length > 0) {
+            $wire.createMessage(message).then(result => {
+                messageInput.value = "";
 
-                    // Notify others in the chat about the new message via Echo
-                    Echo.join(`chat.${chatUuid}`)
-                        .whisper("newChat", {
-                            newMessage: result
-                        });
-                });
+                Echo.join(`chat.${chatUuid}`)
+                    .whisper("newChat", {
+                        newMessage: result
+                    });
+            });
 
-                // Update the scroll position to show the latest message
-                updateScrollPosition(1000);
-            }
-        });
-
-        // Function to handle the reception of a new message
-        function createNewMessage(e) {
-            let message = e.newMessage;
-
-            // Render the new message in the chat window
-            chatListWrapper.innerHTML += renderNewMessage(message.id, message.full_name, message.avatar, message.message,
-                message.created_at);
-
-            // Scroll to the latest message
             updateScrollPosition(1000);
         }
+    });
 
-        // Function to render the new message HTML structure
-        function renderNewMessage(id, full_name, avatar, message, created_at) {
-            return `
+    messageForm.addEventListener("keyup", (e) => {
+        Echo.join(`chat.${chatUuid}`)
+            .whisper("currentMemberTyping");
+    });
+
+    function currentMemberTyping(e) {
+        let isTypingEl = document.getElementById("chat-member-is-typing");
+
+        setTimeout(() => {
+            isTypingEl.classList.add("hidden");
+        }, 2000);
+
+        isTypingEl.classList.remove("hidden");
+    }
+
+    function createNewMessage(e) {
+        let message = e.newMessage;
+
+        chatListWrapper.innerHTML += renderNewMessage(message.id, message.full_name, message.avatar, message.message,
+            message.created_at);
+
+        updateScrollPosition(1000);
+    }
+
+    function renderNewMessage(id, full_name, avatar, message, created_at) {
+        return `
             <div dir="ltr" wire:key="${id}">
                 <div class="flex items-start gap-2.5">
                     <img class="w-8 h-8 rounded-full" src="${avatar}" alt="${full_name}">
@@ -154,16 +164,14 @@
                 </div>
         </div>
         `;
-        }
+    }
 
-        // Function to automatically scroll the chat to the bottom to show new messages
-        function updateScrollPosition(delay = 0) {
-            setTimeout(() => {
-                chatListWrapper.scrollTop = chatListWrapper.scrollHeight;
-            }, delay);
-        }
+    function updateScrollPosition(delay = 0) {
+        setTimeout(() => {
+            chatListWrapper.scrollTop = chatListWrapper.scrollHeight;
+        }, delay);
+    }
 
-        // Initial scroll position update
-        updateScrollPosition();
-    </script>
+    updateScrollPosition();
+</script>
 @endscript
