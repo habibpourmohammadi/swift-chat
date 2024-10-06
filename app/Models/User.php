@@ -102,4 +102,18 @@ class User extends Authenticatable
     {
         return $this->first_name . " " . $this->last_name;
     }
+
+    public function canSeeChat(string $chat_uuid)
+    {
+        // Query the chat by its UUID and ensure the current user is a member of that chat
+        $chat = Chat::where("chat_uuid", $chat_uuid)->whereHas("members", function ($query) {
+            // Check if the current user is part of the chat's members
+            return $query->where("user_id", $this->id);
+        })
+            ->with("members")
+            ->first();
+
+        // Return true if the chat exists and the user is a member, otherwise return false
+        return $chat == null ? false : true;
+    }
 }

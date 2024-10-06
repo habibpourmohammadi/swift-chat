@@ -40,7 +40,7 @@
         <div class="pt-6 px-3 flex flex-col gap-8 overflow-y-auto scroll-smooth pb-5 h-screen"
             style="scrollbar-width: none; -ms-overflow-style: none;" id="chat-list-wrapper">
             @forelse ($this->messages as $message)
-                <x-home.chat.message :message="$message" />
+                <x-home.chat.message wire:key="{{ $message->id }}" :message="$message" />
             @empty
                 <div class="flex justify-center items-center h-screen text-red-500 font-bold text-sm">
                     پیامی ثبت نشده !
@@ -48,23 +48,122 @@
             @endforelse
         </div>
 
-        <div class="w-full flex items-center gap-3 px-3 pb-2 border-t pt-2 bottom-0">
+        <form id="message-form" class="w-full flex items-center gap-3 px-3 pb-2 border-t pt-2 bottom-0">
             <input type="text" id="message"
                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 autofocus placeholder="پیام خود را بنویسید ..." />
-            <button type="button"
-                class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">ارسال</button>
-        </div>
+            <button type="submit" id="send-button"
+                class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
+                ارسال
+            </button>
+        </form>
     </div>
 </div>
 @script
     <script>
+        // Retrieve the chat UUID from the Livewire component
+        const chatUuid = $wire.uuid;
+        // Select the chat list and message input elements from the DOM
         const chatListWrapper = document.getElementById("chat-list-wrapper");
+        const messageInput = document.getElementById("message");
+        const messageForm = document.getElementById("message-form");
 
-        updateScrollPosition();
+        // Join the Echo channel for real-time messaging using the chat UUID
+        Echo.join(`chat.${chatUuid}`)
+            .listenForWhisper("newChat", createNewMessage);
 
-        function updateScrollPosition() {
-            chatListWrapper.scrollTop = chatListWrapper.scrollHeight;
+        // Handle form submission for sending a new message
+        messageForm.addEventListener("submit", (e) => {
+            e.preventDefault();
+
+            let message = messageInput.value;
+
+            if (message.length > 0) {
+                // Send the message via Livewire and handle the response
+                $wire.createMessage(message).then(result => {
+                    messageInput.value = "";
+
+                    // Notify others in the chat about the new message via Echo
+                    Echo.join(`chat.${chatUuid}`)
+                        .whisper("newChat", {
+                            newMessage: result
+                        });
+                });
+
+                // Update the scroll position to show the latest message
+                updateScrollPosition(1000);
+            }
+        });
+
+        // Function to handle the reception of a new message
+        function createNewMessage(e) {
+            let message = e.newMessage;
+
+            // Render the new message in the chat window
+            chatListWrapper.innerHTML += renderNewMessage(message.id, message.full_name, message.avatar, message.message,
+                message.created_at);
+
+            // Scroll to the latest message
+            updateScrollPosition(1000);
         }
+
+        // Function to render the new message HTML structure
+        function renderNewMessage(id, full_name, avatar, message, created_at) {
+            return `
+            <div dir="ltr" wire:key="${id}">
+                <div class="flex items-start gap-2.5">
+                    <img class="w-8 h-8 rounded-full" src="${avatar}" alt="${full_name}">
+                    <div class="flex flex-col gap-1 w-fit">
+                        <div class="flex items-center gap-2">
+                            <span class="text-sm font-semibold text-gray-900">
+                                ${full_name}
+                    </span>
+                    <span class="text-sm font-normal text-gray-500 dark:text-gray-400">
+                                ${created_at}
+                    </span>
+                </div>
+                    <div
+                        class="flex flex-col leading-1.5 p-4 border-gray-200 bg-gray-100 rounded-e-xl rounded-es-xl dark:bg-gray-700">
+                        <p class="text-sm font-normal text-gray-900 dark:text-white">
+                                        ${message}
+                        </p>
+                    </div>
+            </div>
+              <button id="dropdownMenuIconButton-${id}" data-dropdown-toggle="dropdownDots-${id}"
+                            data-dropdown-placement="bottom-start"
+                            class="inline-flex self-center items-center p-2 text-sm font-medium text-center text-gray-900 bg-white rounded-lg hover:bg-gray-100 focus:ring-4 focus:outline-none dark:text-white focus:ring-gray-50 dark:bg-gray-900 dark:hover:bg-gray-800 dark:focus:ring-gray-600"
+                            type="button">
+                        <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                             fill="currentColor" viewBox="0 0 4 15">
+                            <path
+                                d="M3.5 1.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Zm0 6.041a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Zm0 5.959a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Z"/>
+                        </svg>
+                    </button>
+                    <div id="dropdownDots-${id}"
+                         class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-40 dark:bg-gray-700 dark:divide-gray-600">
+                        <ul class="py-2 text-sm text-gray-700 dark:text-gray-200"
+                            aria-labelledby="dropdownMenuIconButton-${id}">
+                            <li>
+                                <a href="#"
+                                    class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                                    حذف
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+        </div>
+        `;
+        }
+
+        // Function to automatically scroll the chat to the bottom to show new messages
+        function updateScrollPosition(delay = 0) {
+            setTimeout(() => {
+                chatListWrapper.scrollTop = chatListWrapper.scrollHeight;
+            }, delay);
+        }
+
+        // Initial scroll position update
+        updateScrollPosition();
     </script>
 @endscript

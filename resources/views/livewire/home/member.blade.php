@@ -17,7 +17,7 @@
                     @endif
                     <span>
                         @if ($this->latestMessage->message_type == 'text')
-                            {{ Str::limit($this->latestMessage->message, 28, '...') }}
+                            {{ Str::limit($this->latestMessage->message, 20, '...') }}
                         @else
                             <span class="text-green-500">
                                 یک فایل ارسال شده !
