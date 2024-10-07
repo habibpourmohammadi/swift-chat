@@ -97,6 +97,11 @@
     messageForm.addEventListener("keyup", (e) => {
         Echo.join(`chat.${chatUuid}`)
             .whisper("currentMemberTyping");
+
+        Echo.join("chat")
+            .whisper("memberTyping",{
+                chatUuid : $wire.uuid
+            });
     });
 
     function currentMemberTyping(e) {
@@ -115,7 +120,7 @@
         chatListWrapper.innerHTML += renderNewMessage(message.id, message.full_name, message.avatar, message.message,
             message.created_at);
 
-        updateScrollPosition(1000);
+        updateScrollPosition();
     }
 
     function renderNewMessage(id, full_name, avatar, message, created_at) {
@@ -169,6 +174,8 @@
     function updateScrollPosition(delay = 0) {
         setTimeout(() => {
             chatListWrapper.scrollTop = chatListWrapper.scrollHeight;
+
+            initFlowbite();
         }, delay);
     }
 

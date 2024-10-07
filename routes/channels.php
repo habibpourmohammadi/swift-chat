@@ -12,3 +12,11 @@ Broadcast::channel("chat.{chatUuid}", function (User $user, string $chatUuid) {
         ];
     }
 });
+
+Broadcast::channel("chat", function (User $user) {
+        return [
+            "full_name" => $user->full_name,
+            "username" => $user->username,
+            "avatar" => $user->avatar,
+        ];
+});

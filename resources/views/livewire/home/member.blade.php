@@ -1,5 +1,5 @@
 <div wire:click="redirectToChatPage"
-    class="flex flex-row w-full justify-between hover:bg-gray-100 hover:cursor-pointer hover:transition-all rounded-lg p-1.5 my-2.5">
+     class="flex flex-row w-full justify-between hover:bg-gray-100 hover:cursor-pointer hover:transition-all rounded-lg p-1.5 my-2.5">
     <div class="flex gap-2">
         <div>
             <img src="{{ $member->user->avatar }}" class="w-12 rounded-lg" alt="{{ $member->user->full_name }}">
@@ -36,9 +36,13 @@
     </div>
     <div>
         <span class="text-sm text-gray-500">
-            <small>
+            <small class="flex flex-col items-center justify-between gap-2">
                 <small>
                     {{ $this->latestMessage ? $this->latestMessage->created_at->ago() : '' }}
+                </small>
+                <small>
+                    <span id="member-status-{{ $member->chat->chat_uuid }}"
+                          class="hidden bg-green-100 text-green-800 font-medium me-2 px-2.5 py-0.5 rounded"></span>
                 </small>
             </small>
         </span>
