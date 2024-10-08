@@ -40,7 +40,7 @@
                 <small>
                     {{ $this->latestMessage ? $this->latestMessage->created_at->ago() : '' }}
                 </small>
-                <small>
+                <small id="member-status-{{ $member->user->username }}">
                     <span id="member-status-{{ $member->chat->chat_uuid }}"
                           class="hidden bg-green-100 text-green-800 font-medium me-2 px-2.5 py-0.5 rounded"></span>
                 </small>
