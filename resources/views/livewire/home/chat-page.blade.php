@@ -67,7 +67,6 @@
 @script
 <script>
     const chatUuid = $wire.uuid;
-    let onlineChatUsers = [];
     const chatListWrapper = document.getElementById("chat-list-wrapper");
     const messageInput = document.getElementById("message");
     const messageForm = document.getElementById("message-form");
