@@ -18,9 +18,11 @@
 
         <div class="flex flex-row pt-3 w-full bg-gray-50 shadow-sm border-b">
             <div class="flex flex-row w-full justify-start items-center gap-3 pr-3 pb-3.5">
-                <div>
+                <div class="relative">
                     <img src="{{ $this->member->user->avatar }}" class="w-10 rounded-md shadow-sm"
                          alt="{{ $this->member->user->full_name }}">
+                    <span id="avatar-member-status-{{ $this->member->user->username }}"
+                          class="hidden absolute bottom-0 right-8 transform translate-y-1/4 w-3.5 h-3.5 bg-green-400 border-2 border-white dark:border-gray-800 rounded-full"></span>
                 </div>
                 <div class="flex flex-col gap-1">
                     <span class="text-sm text-gray-700">
@@ -88,6 +90,14 @@
                     .whisper("newChat", {
                         newMessage: result
                     });
+
+                Echo.join("chat")
+                    .whisper("changeLastMessage", {
+                        message: truncateString(result.message, 20),
+                        chat_uuid: chatUuid,
+                    });
+
+                updateLastMessage(truncateString(result.message, 20));
             });
 
             updateScrollPosition(1000);
@@ -178,6 +188,31 @@
             initFlowbite();
         }, delay);
     }
+
+    function updateLastMessage(message) {
+        let messageWrapper = document.getElementById(`last-message-wrapper-${chatUuid}`);
+
+        messageWrapper.innerHTML = renderLastMessage(message);
+    }
+
+    function renderLastMessage(message) {
+        return `
+            <span id="is-owner-of-last-message-${chatUuid}" class="text-blue-500">
+              شما :
+            </span>
+            <span id="last-message-chat-${chatUuid}">
+              ${message}
+            </span>
+        `;
+    }
+
+    function truncateString(str, num) {
+        if (str.length <= num) {
+            return str;
+        }
+        return str.slice(0, num) + "...";
+    }
+
 
     updateScrollPosition();
 </script>

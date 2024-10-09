@@ -4,7 +4,8 @@ Echo.join("chat")
     .here(handleHereUsers)
     .joining(handleUserJoining)
     .leaving(handleUserLeaving)
-    .listenForWhisper("memberTyping", handleMemberTyping);
+    .listenForWhisper("memberTyping", handleMemberTyping)
+    .listenForWhisper("changeLastMessage", handleChangeLastMessage);
 
 function handleMemberTyping(e) {
     let memberStatus = document.getElementById(`member-status-${e.chatUuid}`);
@@ -41,8 +42,21 @@ function handleUserLeaving(user) {
     changeUserStatus(user.username, "", "hidde");
 }
 
+function handleChangeLastMessage(e) {
+    let lastMessageEl = document.getElementById(`last-message-chat-${e.chat_uuid}`);
+    let isOwnerEl = document.getElementById(`is-owner-of-last-message-${e.chat_uuid}`);
+
+    if (lastMessageEl) {
+        lastMessageEl.innerHTML = e.message;
+        if (isOwnerEl) {
+            isOwnerEl.classList.add("hidden");
+        }
+    }
+}
+
 function changeUserStatus(username, status = "", elStatus, push = true) {
     let memberStatus = document.getElementById(`member-status-${username}`)
+    let memberAvatarStatus = document.getElementById(`avatar-member-status-${username}`)
 
     if (memberStatus) {
         if (elStatus === "show") {
@@ -62,8 +76,14 @@ function changeUserStatus(username, status = "", elStatus, push = true) {
         firstElementChild.innerHTML = status;
 
         if (elStatus === "show") {
+            if (memberAvatarStatus) {
+                memberAvatarStatus.classList.remove("hidden");
+            }
             firstElementChild.classList.remove("hidden");
         } else if (elStatus === "hidde") {
+            if (memberAvatarStatus) {
+                memberAvatarStatus.classList.add("hidden");
+            }
             firstElementChild.classList.add("hidden");
         }
     }

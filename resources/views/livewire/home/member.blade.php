@@ -9,13 +9,13 @@
                 {{ $member->user->full_name }}
             </span>
             @if ($this->latestMessage != null)
-                <span class="text-xs text-gray-400">
+                <span id="last-message-wrapper-{{ $member->chat->chat_uuid }}" class="text-xs text-gray-400">
                     @if ($this->latestMessage->member->user_id == auth()->user()->id)
-                        <span class="text-blue-500">
+                        <span id="is-owner-of-last-message-{{ $member->chat->chat_uuid }}" class="text-blue-500">
                             شما :
                         </span>
                     @endif
-                    <span>
+                    <span id="last-message-chat-{{ $member->chat->chat_uuid }}">
                         @if ($this->latestMessage->message_type == 'text')
                             {{ Str::limit($this->latestMessage->message, 20, '...') }}
                         @else
