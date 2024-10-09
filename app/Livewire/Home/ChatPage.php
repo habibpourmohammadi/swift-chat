@@ -4,6 +4,7 @@ namespace App\Livewire\Home;
 
 use App\Models\Chat;
 use App\Models\ChatMessage;
+use Carbon\Carbon;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 use Livewire\Attributes\Computed;
@@ -32,7 +33,14 @@ class ChatPage extends Component
     public function messages()
     {
         // Get all messages for the current chat
-        return $this->chat->messages;
+        return $this->chat->messages->chunkWhile(function ($current_message, $key, $chunk) {
+            // Parse the creation dates of the current and previous messages
+            $current_message_date = Carbon::parse($current_message->created_at);
+            $previous_message_date = Carbon::parse($chunk->last()->created_at);
+
+            // Group messages that were sent on the same day
+            return $current_message_date->isSameDay($previous_message_date);
+        })->all();
     }
 
     #[Computed()]

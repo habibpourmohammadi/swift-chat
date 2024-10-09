@@ -46,8 +46,15 @@
         </div>
         <div class="pt-6 px-3 flex flex-col gap-8 overflow-y-auto scroll-smooth pb-5 h-screen"
              style="scrollbar-width: none; -ms-overflow-style: none;" id="chat-list-wrapper">
-            @forelse ($this->messages as $message)
-                <x-home.chat.message wire:key="{{ $message->id }}" :message="$message"/>
+            @forelse ($this->messages as $chunkMessages)
+                <div class="w-full text-center py-2">
+                    <span class="bg-gray-100 text-gray-700 px-3 rounded-md border border-green-400 shadow-sm shadow-green-100 text-sm">
+                        {{ jalaliDate($chunkMessages->last()->created_at,'%d %B - %Y') }}
+                    </span>
+                </div>
+                @foreach($chunkMessages->all() as $message)
+                    <x-home.chat.message wire:key="{{ $message->id }}" :message="$message"/>
+                @endforeach
             @empty
                 <div class="flex justify-center items-center h-screen text-red-500 font-bold text-sm">
                     پیامی ثبت نشده !
