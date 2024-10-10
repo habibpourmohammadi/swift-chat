@@ -20,3 +20,12 @@ Broadcast::channel("chat", function (User $user) {
             "avatar" => $user->avatar,
         ];
 });
+
+
+Broadcast::channel("chat.member.{username}", function (User $user, $username) {
+    return [
+        "full_name" => $user->full_name,
+        "username" => $user->username,
+        "avatar" => $user->avatar,
+    ];
+});

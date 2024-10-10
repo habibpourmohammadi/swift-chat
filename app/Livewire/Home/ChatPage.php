@@ -6,6 +6,7 @@ use App\Models\Chat;
 use App\Models\ChatMessage;
 use Carbon\Carbon;
 use Livewire\Attributes\Locked;
+use Livewire\Attributes\On;
 use Livewire\Component;
 use Livewire\Attributes\Computed;
 use Illuminate\Support\Facades\Auth;
@@ -50,6 +51,7 @@ class ChatPage extends Component
         return $this->chat->members()->where("user_id", "!=", Auth::user()->id)->first();
     }
 
+    #[On("update-chat-list")]
     #[Computed()]
     public function chats()
     {

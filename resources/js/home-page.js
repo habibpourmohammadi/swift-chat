@@ -1,4 +1,5 @@
 let onlineUsers = [];
+const username = document.getElementById("current-username").innerText;
 
 Echo.join("chat")
     .here(handleHereUsers)
@@ -6,6 +7,15 @@ Echo.join("chat")
     .leaving(handleUserLeaving)
     .listenForWhisper("memberTyping", handleMemberTyping)
     .listenForWhisper("changeLastMessage", handleChangeLastMessage);
+
+Echo.join(`chat.member.${username}`)
+    .listen("CreateNewChat", handleCreateNewChat);
+
+function handleCreateNewChat(e) {
+    let event = new Event('update-chat-list');
+
+    window.dispatchEvent(event);
+}
 
 function handleMemberTyping(e) {
     let memberStatus = document.getElementById(`member-status-${e.chatUuid}`);

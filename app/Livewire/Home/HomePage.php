@@ -28,6 +28,7 @@ class HomePage extends Component
         $this->dispatch($eventName, title: $eventTitle, message: $eventMessage);
     }
 
+    #[On("update-chat-list")]
     #[Computed()]
     public function chats()
     {
