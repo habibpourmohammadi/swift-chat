@@ -26,9 +26,9 @@
                     </span>
                 </span>
             @else
-                <span class="text-xs text-red-400 font-bold">
-                    <span>
-                        پیامی ثبت نشده !
+                <span id="last-message-wrapper-{{ $member->chat->chat_uuid }}" class="text-xs text-gray-400">
+                    <span id="last-message-chat-{{ $member->chat->chat_uuid }}" class="text-red-400 font-bold">
+                            پیامی ثبت نشده !
                     </span>
                 </span>
             @endif

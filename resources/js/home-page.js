@@ -9,12 +9,24 @@ Echo.join("chat")
     .listenForWhisper("changeLastMessage", handleChangeLastMessage);
 
 Echo.join(`chat.member.${username}`)
-    .listen("CreateNewChat", handleCreateNewChat);
+    .listen("CreateNewChat", handleCreateNewChat)
+    .listenForWhisper("updateOnlineStatus", handleUpdateOnlineStatus);
 
 function handleCreateNewChat(e) {
     let event = new Event('update-chat-list');
 
     window.dispatchEvent(event);
+
+    if (e.newMemberUsername) {
+        setTimeout(() => {
+            changeUserStatus(e.newMemberUsername, "آنلاین", "show");
+
+            Echo.join(`chat.member.${e.newMemberUsername}`)
+                .whisper("updateOnlineStatus", {
+                    username: username
+                });
+        }, 500);
+    }
 }
 
 function handleMemberTyping(e) {
@@ -58,10 +70,16 @@ function handleChangeLastMessage(e) {
 
     if (lastMessageEl) {
         lastMessageEl.innerHTML = e.message;
+        lastMessageEl.classList.remove("text-red-400");
+        lastMessageEl.classList.remove("font-bold");
         if (isOwnerEl) {
             isOwnerEl.classList.add("hidden");
         }
     }
+}
+
+function handleUpdateOnlineStatus(e){
+    changeUserStatus(e.username, "آنلاین", "show");
 }
 
 function changeUserStatus(username, status = "", elStatus, push = true) {

@@ -18,13 +18,17 @@ class CreateNewChat implements ShouldBroadcast
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     private string $username;
+    public string $newMemberUsername;
 
     /**
-     *  Constructor to initialize the event with the username.
+     *  Constructor to initialize the event with the requested user's username and the username of the authenticated user.
      */
     public function __construct(string $username)
     {
+        //  requested user's username
         $this->username = $username;
+        //  the username of the authenticated user
+        $this->newMemberUsername = Auth::user()->username;
     }
 
     /**

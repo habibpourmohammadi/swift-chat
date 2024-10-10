@@ -21,7 +21,7 @@
                 <div class="relative">
                     <img src="{{ $this->member->user->avatar }}" class="w-10 rounded-md shadow-sm"
                          alt="{{ $this->member->user->full_name }}">
-                    <span id="avatar-member-status-{{ $this->member->user->username }}"
+                    <span id="avatar-member-status-{{ $this->member->user->username }}" wire:ignore
                           class="hidden absolute bottom-0 right-8 transform translate-y-1/4 w-3.5 h-3.5 bg-green-400 border-2 border-white dark:border-gray-800 rounded-full"></span>
                 </div>
                 <div class="flex flex-col gap-1">
@@ -48,7 +48,8 @@
              style="scrollbar-width: none; -ms-overflow-style: none;" id="chat-list-wrapper">
             @forelse ($this->messages as $chunkMessages)
                 <div class="w-full text-center py-2">
-                    <span class="bg-gray-100 text-gray-700 px-3 rounded-md border border-green-400 shadow-sm shadow-green-100 text-sm">
+                    <span
+                        class="bg-gray-100 text-gray-700 px-3 rounded-md border border-green-400 shadow-sm shadow-green-100 text-sm">
                         {{ jalaliDate($chunkMessages->last()->created_at,'%d %B - %Y') }}
                     </span>
                 </div>
