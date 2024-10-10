@@ -67,10 +67,13 @@ class ChatPage extends Component
             $this->redirectRoute("home.page", navigate: true);
         }
 
+        // Get member ID for Authenticated user
+        $currentUserMemberId = $this->chat->members()->where("user_id", "=", Auth::user()->id)->first()->id;
+
         // Create a new message in the chat for the authenticated user
         $newMessage = ChatMessage::create([
             "chat_id" => $this->chat->id,
-            "member_id" => Auth::user()->id,
+            "member_id" => $currentUserMemberId,
             "message" => $message,
             "message_type" => "text",
         ]);

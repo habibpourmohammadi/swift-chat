@@ -67,7 +67,7 @@ class CreateChatModal extends Component
         });
 
         // Broadcast the new chat creation event to notify The requested User
-        broadcast(new CreateNewChat($this->username))->toOthers();
+        broadcast(new CreateNewChat(strtolower($this->username)))->toOthers();
 
         // Redirect to the newly created chat page
         $this->redirectRoute("home.chat.page", [$chat->chat_uuid], navigate: true);
