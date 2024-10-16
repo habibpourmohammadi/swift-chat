@@ -10,6 +10,7 @@ Echo.join("chat")
 
 Echo.join(`chat.member.${username}`)
     .listen("CreateNewChat", handleCreateNewChat)
+    .listen("DeleteMessage", handleDeleteMessage)
     .listenForWhisper("updateOnlineStatus", handleUpdateOnlineStatus);
 
 function handleCreateNewChat(e) {
@@ -27,6 +28,31 @@ function handleCreateNewChat(e) {
                 });
         }, 500);
     }
+}
+
+function handleDeleteMessage(e) {
+    let event = new Event('update-chat-list');
+    window.dispatchEvent(event);
+
+    let response = {};
+
+    if (e.isLastMessage == false) {
+        response = {
+            chat_uuid: e.chatUuid,
+            message: "پیامی ثبت نشده !",
+            chat_status: "clear"
+        }
+    } else {
+        response = {
+            chat_uuid: e.chatUuid,
+            message: truncateString(e.isLastMessage.message, 20),
+            lastMessageUsername: e.isLastMessage.username,
+        }
+    }
+
+    setTimeout(() => {
+        handleChangeLastMessage(response);
+    }, 200);
 }
 
 function handleMemberTyping(e) {
@@ -72,13 +98,59 @@ function handleChangeLastMessage(e) {
         lastMessageEl.innerHTML = e.message;
         lastMessageEl.classList.remove("text-red-400");
         lastMessageEl.classList.remove("font-bold");
-        if (isOwnerEl) {
+        if (isOwnerEl && e.lastMessageUsername == null) {
             isOwnerEl.classList.add("hidden");
+            if (e.chat_status && e.chat_status == "clear") {
+                document.getElementById(`last-message-wrapper-${e.chat_uuid}`).innerHTML = renderClearChatMessage(e.message, e.chat_uuid);
+            }
+        } else if (e.lastMessageUsername || e.chat_status) {
+            let lastMessageWrapper = document.getElementById(`last-message-wrapper-${e.chat_uuid}`);
+            let lastMessageChat = document.getElementById(`last-message-chat-${e.chat_uuid}`);
+
+            if (e.chat_status && e.chat_status == "clear") {
+                lastMessageWrapper.innerHTML = renderClearChatMessage(e.message, e.chat_uuid);
+                return;
+            }
+
+            if (e.lastMessageUsername == username) {
+                if (!isOwnerEl) {
+                    lastMessageWrapper.innerHTML = renderMyLastMessage(e.message, e.chat_uuid);
+                } else {
+                    lastMessageChat.innerHTML = e.message;
+                    isOwnerEl.classList.remove("hidden");
+                }
+            } else {
+                if (isOwnerEl) {
+                    lastMessageChat.innerHTML = e.message;
+                    isOwnerEl.classList.add("hidden");
+                } else {
+                    lastMessageChat.innerHTML = e.message;
+                }
+            }
         }
     }
 }
 
-function handleUpdateOnlineStatus(e){
+function renderClearChatMessage(message, chatUuid) {
+    return `
+        <span id="last-message-chat-${chatUuid}" class="text-red-400 font-bold">
+          ${message}
+        </span>
+    `;
+}
+
+function renderMyLastMessage(message, chatUuid) {
+    return `
+            <span id="is-owner-of-last-message-${chatUuid}" class="text-blue-500">
+              شما :
+            </span>
+            <span id="last-message-chat-${chatUuid}">
+              ${message}
+            </span>
+        `;
+}
+
+function handleUpdateOnlineStatus(e) {
     changeUserStatus(e.username, "آنلاین", "show");
 }
 
@@ -115,6 +187,13 @@ function changeUserStatus(username, status = "", elStatus, push = true) {
             firstElementChild.classList.add("hidden");
         }
     }
+}
+
+function truncateString(str, num) {
+    if (str.length <= num) {
+        return str;
+    }
+    return str.slice(0, num) + "...";
 }
 
 document.addEventListener('livewire:navigated', (event) => {

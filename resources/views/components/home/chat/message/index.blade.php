@@ -1,4 +1,4 @@
-<div {{ $message->member->user_id == auth()->user()->id ? 'dir=rtl' : 'dir=ltr' }} wire:key="{{ $attributes->get("wire:key") }}">
+<div {{ $message->member->user_id == auth()->user()->id ? 'dir=rtl' : 'dir=ltr' }}>
     <div class="flex items-start gap-2.5">
         <img class="w-8 h-8 rounded-full" src="{{ $message->member->user->avatar }}" alt="{{ $message->member->user->full_name }}">
         <div class="flex flex-col gap-1 w-fit">
@@ -36,10 +36,9 @@
             <ul class="py-2 text-sm text-gray-700 dark:text-gray-200"
                 aria-labelledby="dropdownMenuIconButton-{{ $message->id }}">
                 <li>
-                    <a href="#"
-                        class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                    <button wire:click="deleteMessage({{ $message->id }})" type="button" class="w-full text-right block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
                         حذف
-                    </a>
+                    </button>
                 </li>
             </ul>
         </div>

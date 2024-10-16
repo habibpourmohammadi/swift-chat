@@ -54,7 +54,11 @@
                     </span>
                 </div>
                 @foreach($chunkMessages->all() as $message)
-                    <x-home.chat.message wire:key="{{ $message->id }}" :message="$message"/>
+                    <div wire:key="{{ $message->id }}" id="{{ $uuid . '-' . $message->id }}">
+                        <x-home.chat.message
+                            :message="$message"
+                        />
+                    </div>
                 @endforeach
             @empty
                 <div class="flex justify-center items-center h-screen text-red-500 font-bold text-sm">

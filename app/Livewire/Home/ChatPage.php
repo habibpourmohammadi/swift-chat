@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Home;
 
+use App\Events\DeleteMessage;
 use App\Models\Chat;
 use App\Models\ChatMessage;
 use Carbon\Carbon;
@@ -86,5 +87,32 @@ class ChatPage extends Component
             "message" => $newMessage->message,
             "created_at" => jalaliDate($newMessage->created_at, "H:i"),
         ];
+    }
+
+    /**
+     * Delete a chat message by its ID and broadcast the event.
+     */
+    public function deleteMessage($messageId)
+    {
+        // Find the message by its ID
+        $message = ChatMessage::find($messageId);
+
+        if ($message) {
+            // Check if the user is part of the chat and has the permission to delete the message
+            $canDeleted = $message->chat->members()->where("user_id", Auth::user()->id)->first();
+
+            // Verify the message belongs to the current chat and the user is authorized
+            if ($message->chat->chat_uuid === $this->uuid && $message->chat && $canDeleted) {
+                // Delete the message
+                $message->delete();
+
+                // Get the latest message after deletion
+                $lastMessage = ChatMessage::where("chat_id", $this->member()->chat->id)->get()->last();
+                $isLatestMessage = $lastMessage ? ["message" => $lastMessage->message, "username" => $lastMessage->member->user->username] : false;
+
+                // Broadcast the DeleteMessage event
+                broadcast(new DeleteMessage($this->member()->user->username, $isLatestMessage, $this->uuid));
+            }
+        }
     }
 }
