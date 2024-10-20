@@ -2,10 +2,10 @@
      class="flex flex-row w-full justify-between hover:bg-gray-100 hover:cursor-pointer hover:transition-all rounded-lg p-1.5 my-2.5">
     <div class="flex gap-2">
         <div>
-            <img src="{{ $member->user->avatar }}" class="w-12 rounded-lg" alt="{{ $member->user->full_name }}">
+            <img id="user-avatar-{{ $member->user->username }}" src="{{ $member->user->avatar }}" class="w-12 rounded-lg" alt="{{ $member->user->full_name }}">
         </div>
         <div class="flex flex-col gap-2">
-            <span class="text-sm text-gray-800">
+            <span class="text-sm text-gray-800" id="user-full-name-{{ $member->user->username }}">
                 {{ $member->user->full_name }}
             </span>
             @if ($this->latestMessage != null)

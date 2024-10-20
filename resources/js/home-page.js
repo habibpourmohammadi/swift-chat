@@ -6,12 +6,101 @@ Echo.join("chat")
     .joining(handleUserJoining)
     .leaving(handleUserLeaving)
     .listenForWhisper("memberTyping", handleMemberTyping)
-    .listenForWhisper("changeLastMessage", handleChangeLastMessage);
+    .listenForWhisper("changeLastMessage", handleChangeLastMessage)
+    .listen("UpdateProfile", handelUpdateProfile);
 
 Echo.join(`chat.member.${username}`)
     .listen("CreateNewChat", handleCreateNewChat)
     .listen("DeleteMessage", handleDeleteMessage)
     .listenForWhisper("updateOnlineStatus", handleUpdateOnlineStatus);
+
+function handelUpdateProfile(e) {
+    let newUsername = e.information.username;
+    let oldUsername = e.information.old_username;
+    let full_name = e.information.full_name;
+    let avatar = e.information.avatar;
+
+    let memberSectionFullNameEl = document.getElementById(`user-full-name-${newUsername}`);
+    let memberSectionAvatarEl = document.getElementById(`user-avatar-${newUsername}`);
+    let memberSectionMemberStatusEl = document.getElementById(`member-status-${newUsername}`);
+    let chatSectionHeaderAvatarEl = document.getElementById(`chat-page-header-avatar-${newUsername}`);
+    let chatSectionMemberStatusEl = document.getElementById(`avatar-member-status-${newUsername}`);
+    let chatSectionHeaderFullNameEl = document.getElementById(`chat-page-header-full-name-${newUsername}`);
+    let chatSectionAvatarEl = document.getElementsByClassName(`chat-page-avatar-${newUsername}`);
+    let chatSectionFullNameEl = document.getElementsByClassName(`chat-page-full-name-${newUsername}`);
+
+    if (oldUsername != false) {
+        memberSectionFullNameEl = document.getElementById(`user-full-name-${oldUsername}`);
+        memberSectionAvatarEl = document.getElementById(`user-avatar-${oldUsername}`);
+        memberSectionMemberStatusEl = document.getElementById(`member-status-${oldUsername}`);
+        chatSectionHeaderAvatarEl = document.getElementById(`chat-page-header-avatar-${oldUsername}`);
+        chatSectionMemberStatusEl = document.getElementById(`avatar-member-status-${oldUsername}`);
+        chatSectionHeaderFullNameEl = document.getElementById(`chat-page-header-full-name-${oldUsername}`);
+        chatSectionAvatarEl = document.getElementsByClassName(`chat-page-avatar-${oldUsername}`);
+        chatSectionFullNameEl = document.getElementsByClassName(`chat-page-full-name-${oldUsername}`);
+
+        if (onlineUsers.includes(oldUsername)) {
+            let index = onlineUsers.indexOf(oldUsername);
+
+            if (index !== -1) {
+                onlineUsers.splice(index, 1);
+                onlineUsers.push(newUsername);
+
+                memberSectionFullNameEl.id = "user-full-name-" + newUsername;
+                memberSectionAvatarEl.id = "user-avatar-" + newUsername;
+                memberSectionMemberStatusEl.id = "member-status-" + newUsername;
+                chatSectionHeaderAvatarEl.id = "chat-page-header-avatar-" + newUsername;
+                chatSectionMemberStatusEl.id = "avatar-member-status-" + newUsername;
+                chatSectionHeaderFullNameEl.id = "chat-page-header-full-name-" + newUsername;
+
+                if(chatSectionAvatarEl.length > 0){
+                    Array.from(chatSectionAvatarEl).forEach((element) => {
+                        element.classList.replace(`chat-page-avatar-${oldUsername}`,`chat-page-avatar-${newUsername}`);
+                    });
+
+                    chatSectionAvatarEl = document.getElementsByClassName(`chat-page-avatar-${newUsername}`);
+                }
+
+                if(chatSectionFullNameEl.length > 0){
+                    Array.from(chatSectionFullNameEl).forEach((element) => {
+                        element.classList.replace(`chat-page-full-name-${oldUsername}`,`chat-page-full-name-${newUsername}`);
+                    });
+
+                    chatSectionFullNameEl = document.getElementsByClassName(`chat-page-full-name-${newUsername}`);
+                }
+            }
+        }
+    }
+
+
+    if (memberSectionFullNameEl) {
+        memberSectionFullNameEl.innerText = full_name;
+    }
+
+    if (memberSectionAvatarEl) {
+        memberSectionAvatarEl.src = avatar;
+    }
+
+    if (chatSectionHeaderAvatarEl) {
+        chatSectionHeaderAvatarEl.src = avatar;
+    }
+
+    if (chatSectionHeaderFullNameEl) {
+        chatSectionHeaderFullNameEl.innerText = full_name;
+    }
+
+    if(chatSectionAvatarEl.length > 0){
+        Array.from(chatSectionAvatarEl).forEach((element) => {
+            element.src = avatar;
+        });
+    }
+
+    if(chatSectionFullNameEl.length > 0){
+        Array.from(chatSectionFullNameEl).forEach((element) => {
+            element.innerText = full_name;
+        });
+    }
+}
 
 function handleCreateNewChat(e) {
     let event = new Event('update-chat-list');

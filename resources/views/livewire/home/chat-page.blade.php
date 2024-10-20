@@ -19,13 +19,13 @@
         <div class="flex flex-row pt-3 w-full bg-gray-50 shadow-sm border-b">
             <div class="flex flex-row w-full justify-start items-center gap-3 pr-3 pb-3.5">
                 <div class="relative">
-                    <img src="{{ $this->member->user->avatar }}" class="w-10 rounded-md shadow-sm"
+                    <img id="chat-page-header-avatar-{{ $this->member->user->username }}" src="{{ $this->member->user->avatar }}" class="w-10 rounded-md shadow-sm"
                          alt="{{ $this->member->user->full_name }}">
                     <span id="avatar-member-status-{{ $this->member->user->username }}" wire:ignore
                           class="hidden absolute bottom-0 right-8 transform translate-y-1/4 w-3.5 h-3.5 bg-green-400 border-2 border-white dark:border-gray-800 rounded-full"></span>
                 </div>
                 <div class="flex flex-col gap-1">
-                    <span class="text-sm text-gray-700">
+                    <span id="chat-page-header-full-name-{{ $this->member->user->username }}" class="text-sm text-gray-700">
                         {{ $this->member->user->full_name }}
                     </span>
                     <span id="chat-member-is-typing" class="text-sm text-green-400 hidden">

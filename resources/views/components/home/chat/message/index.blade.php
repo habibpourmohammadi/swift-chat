@@ -1,12 +1,13 @@
 <div {{ $message->member->user_id == auth()->user()->id ? 'dir=rtl' : 'dir=ltr' }}>
     <div class="flex items-start gap-2.5">
-        <img class="w-8 h-8 rounded-full" src="{{ $message->member->user->avatar }}" alt="{{ $message->member->user->full_name }}">
+        <img class="w-8 h-8 rounded-full chat-page-avatar-{{ $message->member->user->username }}"
+             src="{{ $message->member->user->avatar }}" alt="{{ $message->member->user->full_name }}">
         <div class="flex flex-col gap-1 w-fit">
             <div class="flex items-center gap-2">
                 <span @class([
                     'text-sm font-semibold',
                     'text-blue-600' => $message->member->user_id == auth()->user()->id,
-                    'text-gray-900' => $message->member->user_id != auth()->user()->id,
+                    'text-gray-900 chat-page-full-name-' . $message->member->user->username => $message->member->user_id != auth()->user()->id,
                 ])>
                     {{ $message->member->user_id == auth()->user()->id ? 'شما' : $message->member->user->full_name }}
                 </span>
