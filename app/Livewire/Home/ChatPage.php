@@ -14,6 +14,8 @@ use Illuminate\Support\Facades\Auth;
 
 class ChatPage extends Component
 {
+    public $search = "";
+
     public Chat $chat;
 
     #[Locked]
@@ -57,7 +59,7 @@ class ChatPage extends Component
     public function chats()
     {
         // Return the authenticated user's chats
-        return Auth::user()->chats();
+        return Auth::user()->chats($this->search);
     }
 
     public function createMessage($message)

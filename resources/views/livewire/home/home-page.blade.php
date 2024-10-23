@@ -5,7 +5,7 @@
         @include('partials.home.drawer')
         <div class="flex-1 overflow-y-auto scroll-smooth" style="scrollbar-width: none; -ms-overflow-style: none;">
             @forelse ($this->chats as $chat)
-                <livewire:home.member :key="$chat->chat->chat_uuid" :member="$chat" />
+                <livewire:home.member :key="$chat->chat->chat_uuid" :member="$chat"/>
             @empty
                 <div class="text-red-500 text-sm text-center h-full flex justify-center items-center font-bold">
                     لیست گفتگو ها خالی است !

@@ -17,7 +17,7 @@
                     d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
             </svg>
         </span>
-        <input type="text" id="search"
+        <input type="text" id="search" wire:model.live.debounce.250ms="search"
             class="rounded-none rounded-e-lg bg-gray-50 border border-gray-200 text-gray-900 focus:ring-green-200 focus:border-green-400 block flex-1 min-w-0 w-full text-sm p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             placeholder="جستجو">
     </div>

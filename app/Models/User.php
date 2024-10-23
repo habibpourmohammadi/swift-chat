@@ -61,24 +61,40 @@ class User extends Authenticatable
     /**
      * Retrieve chat members excluding the authenticated user.
      */
-    public function chats()
+    public function chats($search = null)
     {
         // Query chats where the authenticated user is a member
         $chats = Chat::query()->whereHas("members", function ($query) {
-            return $query->where("user_id", Auth::user()->id);
+            // Filter chats where the authenticated user is a member
+            $query->where("user_id", $this->id);
         })
             // Load related members for each chat
-            ->with("members")
+            ->with(["members" => function ($query) use ($search) {
+                // Exclude the authenticated user from the members
+                $query->where("user_id", "!=", $this->id);
+
+                // If search is provided, filter members by username, first name, or last name
+                if ($search) {
+                    $query->whereHas("user", function ($query) use ($search) {
+                        return $query->where("username", "like", "%$search%")
+                            ->orWhere("first_name", "like", "%$search%")
+                            ->orWhere("last_name", "like", "%$search%")
+                            ->orWhereRaw("CONCAT(first_name, ' ', last_name) LIKE ?", ["%$search%"]);
+                    })->with("user");
+                }
+            }])
             ->get();
 
         // Map through chats to get the first member who isn't the authenticated user
         $members = $chats->map(function ($chat) {
-            return $chat->members->reject(function ($member) {
-                return $member->user_id == Auth::user()->id;
-            })->first();
+            return $chat->members->first(); // Return the first member (excluding the authenticated user)
+        })->reject(function ($chat) {
+            // Reject any null values to filter out invalid members
+            return $chat == null;
         });
 
-        return $members;
+        // Return the collection of members, or an empty collection if no members are found
+        return $members->count() <= 0 ? collect([]) : $members;
     }
 
     public function members(): HasMany

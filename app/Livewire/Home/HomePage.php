@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Auth;
 
 class HomePage extends Component
 {
+    public $search = "";
+
     /**
      * Handle the component mount event.
      */
@@ -33,6 +35,6 @@ class HomePage extends Component
     public function chats()
     {
         // Return the authenticated user's chats
-        return Auth::user()->chats();
+        return Auth::user()->chats($this->search);
     }
 }
