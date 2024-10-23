@@ -40,6 +40,7 @@ class CreateChatModal extends Component
         // If a chat exists, redirect to the existing chat page
         if ($chat) {
             $this->redirectRoute("home.chat.page", [$chat->chat->chat_uuid], navigate: true);
+            return;
         }
 
         // If no chat exists, create a new chat using a database transaction
