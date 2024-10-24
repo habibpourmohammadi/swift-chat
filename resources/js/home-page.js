@@ -12,6 +12,7 @@ Echo.join("chat")
 Echo.join(`chat.member.${username}`)
     .listen("CreateNewChat", handleCreateNewChat)
     .listen("DeleteMessage", handleDeleteMessage)
+    .listen("UpdateMessage", handleUpdateMessage)
     .listenForWhisper("updateOnlineStatus", handleUpdateOnlineStatus);
 
 function handelUpdateProfile(e) {
@@ -136,6 +137,28 @@ function handleDeleteMessage(e) {
             chat_uuid: e.chatUuid,
             message: truncateString(e.isLastMessage.message, 20),
             lastMessageUsername: e.isLastMessage.username,
+        }
+    }
+
+    setTimeout(() => {
+        handleChangeLastMessage(response);
+    }, 200);
+}
+
+function handleUpdateMessage(e) {
+    if (e.authorUsername != username)
+    {
+        let event = new Event('update-chat-list');
+        window.dispatchEvent(event);
+    }
+
+    let response = {};
+
+    if (e.isLastMessage == true) {
+        response = {
+            chat_uuid: e.chatUuid,
+            message: truncateString(e.newMessage, 20),
+            lastMessageUsername: e.authorUsername,
         }
     }
 

@@ -57,6 +57,7 @@
                     <div wire:key="{{ $message->id }}" id="{{ $uuid . '-' . $message->id }}">
                         <x-home.chat.message
                             :message="$message"
+                            :editingMessage="$editingMessage"
                         />
                     </div>
                 @endforeach
