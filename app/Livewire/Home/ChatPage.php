@@ -176,4 +176,14 @@ class ChatPage extends Component
             }
         }
     }
+
+    public function deleteMainChat()
+    {
+        // Delete the current chat from the database
+        $this->chat->delete();
+
+        // Redirect the user to the home page after chat deletion
+        $this->redirectRoute("home.page", navigate: true);
+        return;
+    }
 }
