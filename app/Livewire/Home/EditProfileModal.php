@@ -3,11 +3,13 @@
 namespace App\Livewire\Home;
 
 use App\Events\UpdateProfile;
+use App\Rules\ValidBirthday;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\Facades\Storage;
+use Morilog\Jalali\Jalalian;
 
 class EditProfileModal extends Component
 {
@@ -18,6 +20,10 @@ class EditProfileModal extends Component
     public string $last_name = "";
 
     public string $username = "";
+
+    public ?string $bio = "";
+
+    public ?string $birthday = "";
 
     public $avatar;
 
@@ -30,6 +36,8 @@ class EditProfileModal extends Component
             "first_name" => Auth::user()->first_name,
             "last_name" => Auth::user()->last_name,
             "username" => Auth::user()->username,
+            "bio" => Auth::user()->bio,
+            "birthday" => Auth::user()->birthday != null ? jalaliDate(Auth::user()->birthday, "Y/m/d") : "",
         ]);
     }
 
@@ -44,7 +52,18 @@ class EditProfileModal extends Component
             "last_name" => ["required", "max:140"],
             "username" => ["required", "alpha", "unique:users,username," . Auth::user()->id, "max:35"],
             "avatar" => ["nullable", "image", "mimes:png,jpg,jpeg", "max:1024"],
+            "birthday" => ["nullable", new ValidBirthday()],
+            "bio" => ["nullable", "max:222"],
         ]);
+
+        // Check if a birthday has been provided
+        if ($this->birthday) {
+            // Split the birthday into year, month, and day
+            [$year, $month, $day] = explode('/', $this->birthday);
+
+            // Convert the Jalali date to a Carbon instance and reformat it as Y-m-d
+            $this->birthday = (new Jalalian($year, $month, $day))->toCarbon()->format("Y-m-d");
+        }
 
         // Get the old username for comparison
         $old_username = Auth::user()->username;
@@ -67,7 +86,9 @@ class EditProfileModal extends Component
             "first_name" => $this->first_name,
             "last_name" => $this->last_name,
             "username" => $this->username,
-            "avatar" => $avatar
+            "avatar" => $avatar,
+            "bio" => $this->bio,
+            "birthday" => $this->birthday,
         ]);
 
         // Broadcast the profile update to others
