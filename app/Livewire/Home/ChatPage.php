@@ -140,6 +140,12 @@ class ChatPage extends Component
             "message_type" => "text",
         ]);
 
+        // Check if the new message is the first message in the chat
+        $isFirstMessage = false;
+        if ($this->chat->messages()->first()->id === $newMessage->id) {
+            $isFirstMessage = true;
+        }
+
         // Return an array with the new message details
         return [
             "id" => $newMessage->id,
@@ -147,6 +153,7 @@ class ChatPage extends Component
             "avatar" => Auth::user()->avatar,
             "message" => $newMessage->message,
             "created_at" => jalaliDate($newMessage->created_at, "H:i"),
+            "isFirstMessage" => $isFirstMessage
         ];
     }
 

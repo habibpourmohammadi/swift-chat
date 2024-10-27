@@ -301,6 +301,12 @@
     function createNewMessage(e) {
         let message = e.newMessage;
 
+        if (e.newMessage.isFirstMessage === true) {
+            let event = new Event('update-chat-list');
+
+            window.dispatchEvent(event);
+        }
+
         chatListWrapper.innerHTML += renderNewMessage(message.id, message.full_name, message.avatar, message.message,
             message.created_at);
 
@@ -342,12 +348,12 @@
                          class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-40 dark:bg-gray-700 dark:divide-gray-600">
                         <ul class="py-2 text-sm text-gray-700 dark:text-gray-200"
                             aria-labelledby="dropdownMenuIconButton-${id}">
-                            <li>
-                                <a href="#"
-                                    class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                           <li>
+                                <button wire:click="deleteMessage(${id})" type="button"
+                                        class="w-full text-right block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
                                     حذف
-                                </a>
-                            </li>
+                                </button>
+                           </li>
                         </ul>
                     </div>
                 </div>
